@@ -5,9 +5,7 @@ import logging
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
 from dataclasses import dataclass, asdict
-from pypushdeer import PushDeer
-from logging_config import init_logger
-
+from common import LogEmoji, PushService, logger
 
 class CheckinStatus(Enum):
     """签到状态"""
@@ -32,26 +30,6 @@ class APIEndpoint(Enum):
     STATUS = "/api/user/status"
     POINTS = "/api/user/points"
     EXCHANGE = "/api/user/exchange"
-
-
-class LogEmoji:
-    """日志 Emoji 常量"""
-
-    SUCCESS = "✅"
-    FAIL = "❌"
-    REPEAT = "🔄"
-    PENDING = "⏳"
-    CHECKIN = "🎫"
-    STATUS = "📊"
-    POINTS = "💰"
-    EXCHANGE = "🎁"
-    START = "🚀"
-    END = "🏁"
-    COOKIE = "🍪"
-    DOMAIN = "🌐"
-    WARNING = "⚠️ "
-    ERROR = "🔴"
-    INFO = "ℹ️ "
 
 
 def log_method(func):
@@ -390,28 +368,6 @@ class CheckinResult:
         return result_dict
 
 
-class PushService:
-    """推送服务"""
-
-    def __init__(self, config: Config):
-        self.config = config
-
-    def send(self, title: str, content: str) -> bool:
-        """发送推送"""
-        if not self.config.push_key:
-            logger.info(f"{LogEmoji.WARNING} 未设置推送密钥，跳过推送通知。")
-            return False
-
-        try:
-            pushdeer = PushDeer(pushkey=self.config.push_key)
-            pushdeer.send_text(title, desp=content)
-            logger.info(f"{LogEmoji.SUCCESS} 推送通知发送成功。")
-            return True
-        except Exception as e:
-            logger.error(f"{LogEmoji.ERROR} 发送推送通知失败: {e}")
-            return False
-
-
 class Checker:
     """签到"""
 
@@ -515,10 +471,6 @@ class Checker:
         return title, content, log_content
 
 
-# 初始化日志
-logger = init_logger()
-
-
 def main():
     """主函数"""
     try:
@@ -546,7 +498,8 @@ def main():
 
     # 4. 发送推送
     logger.info(f"{LogEmoji.START} 步骤 4: 发送推送")
-    push_service = PushService(config if "config" in locals() else "")
+    push_key = config.push_key if "config" in locals() else ""
+    push_service = PushService(push_key)
     push_service.send(title, content)
     logger.info(f"{LogEmoji.END} 签到完成")
 

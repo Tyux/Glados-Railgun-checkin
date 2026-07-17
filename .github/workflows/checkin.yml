@@ -8,11 +8,11 @@ on:
       - 'README.md'
       - 'imgs/**'
   schedule:
-    - cron: '0 4,10 * * *'
+    - cron: '0 4 * * *'
 
 jobs:
   build:
-    name: glados/railgun checkin
+    name: glados/railgun/smzdm checkin
     runs-on: ubuntu-latest
       
     permissions:
@@ -43,15 +43,23 @@ jobs:
         pip install requests
         pip install pypushdeer
 
-    # 执行 签到脚本
-    - name: Running checkin
+    # 执行 GLaDOS 签到脚本
+    - name: Running GLaDOS checkin
       run: |
-        python checkin.py
+        python glados_checkin.py
       env:
         PUSHDEER_SENDKEY: ${{ secrets.PUSHDEER_SENDKEY }}
         GLADOS_COOKIES: ${{ secrets.GLADOS_COOKIES }}
         GLADOS_EXCHANGE_PLAN: ${{ secrets.GLADOS_EXCHANGE_PLAN }}
         GLADOS_VERBOSE: ${{ secrets.GLADOS_VERBOSE }}
+
+    # 执行 什么值得买 签到脚本
+    - name: Running SMZDM checkin
+      run: |
+        python smzdm_checkin.py
+      env:
+        PUSHDEER_SENDKEY: ${{ secrets.PUSHDEER_SENDKEY }}
+        SMZDM_COOKIES: ${{ secrets.SMZDM_COOKIES }}
 
     - name: Keep alive
       uses: liskin/gh-workflow-keepalive@v1 

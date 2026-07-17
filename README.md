@@ -1,4 +1,4 @@
-# Glados自动签到
+# Glados 自动签到
 
 ## 食用方式：
 
@@ -10,7 +10,7 @@
 
 1. 跳转至自己的仓库的`Settings`->`Secrets and variables`->`Action`
 
-2. 添加1个`repository secret`，命名为`GLADOS_COOKIES`，其值对应GLaDOS账号的cookie值中的有效部分（获取方式如下）
+2. GLaDOS 签到配置：添加1个`repository secret`，命名为`GLADOS_COOKIES`，其值对应GLaDOS账号的cookie值中的有效部分（获取方式如下）
 
 - 在GLaDOS的签到页面按`F12`
 
@@ -26,7 +26,12 @@
 
 - 多账号请在 `COOKIES` 中 添加多个 `cookies` 中间使用 `&`连接即可。（例如： `c1&c3&c3...`）
 
-3. 配置积分兑换策略（非必须）
+3. smzdm配置（非必须）：添加1个`repository secret`，命名为`SMZDM_COOKIES`，其值对应smzdm账号的cookie值(需登录后获取)
+- 多账号同样使用 `&` 连接（例如： `cookie1&cookie2...`）
+
+> 不配置 `SMZDM_COOKIES` 时，smzdm步骤将自动跳过
+
+4. 配置积分兑换策略（非必须）
 
 - 添加1个`repository secret`，命名为`GLADOS_EXCHANGE_PLAN`，配置自动兑换积分策略：
 
@@ -38,9 +43,9 @@
 
 > 不配置时默认为 `plan500`，即积分达到 500 时自动兑换 100 天
 
-4. 手机推送（非必须）
+5. 手机推送（非必须）
 
-- 添加1个`repository secret`，命名为`PUSHDEER_SENDKEY`，其值对应 PushDeer key: ([获取地址](https://www.pushdeer.com/product.html))。
+- 添加1个`repository secret`，命名为`PUSHDEER_SENDKEY`，其值对应 PushDeer key: ([获取地址](https://www.pushdeer.com/product.html))。推送同时覆盖 GLaDOS 和什么值得买的签到结果。
 
 ### **star**自己的仓库
 
@@ -49,17 +54,21 @@
 ## 文件结构
 
 ```shell
-│  checkin.py	# 签到脚本
+│  glados_checkin.py   # GLaDOS 签到脚本
+│  smzdm_checkin.py    # smzdm签到脚本
+│  common.py           # 共享模块（日志Emoji、推送服务）
+│  logging_config.py   # 日志配置
 │
 ├─.github
 │  └─workflows
-│          gladosCheck.yml	# Actions 配置文件
+│          checkin.yml       # Actions 配置文件
 ```
 
 ## 更新日志
 
 - **2026-01**: 重构代码，添加log输出方便定位，支持新版网址，支持配置积分兑换策略。
 - **2026-04**: 优化代码逻辑，优化日志输出，支持[新版域名](https://railgun.info) ，在 GLADOS_COOKIES 中添加新版域名下的 cookies 即可使用。
+- **2026-07**: 新增smzdm自动签到支持，提取共享模块(common.py)提升可维护性。
 
 
 ## 问题排查与定位
