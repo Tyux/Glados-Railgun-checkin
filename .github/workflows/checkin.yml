@@ -3,12 +3,13 @@ name: auto check
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
     paths-ignore:
       - 'README.md'
       - 'imgs/**'
   schedule:
-    - cron: '0 4 * * *'
+    # GitHub Actions cron 使用 UTC 时间，北京时间 = UTC + 8
+    - cron: '17 4 * * *'   # 北京时间 12:17
 
 jobs:
   build:
